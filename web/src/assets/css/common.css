@@ -1,0 +1,104 @@
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+
+
+body,
+blockquote,
+figure {
+  margin: 0;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+  text-align: center;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+dl,
+hr,
+ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+dd {
+  margin-left: 0;
+}
+
+ul {
+  padding-left: 0;
+}
+
+li {
+  list-style: none;
+}
+
+em,
+b,
+i {
+  font-style: normal;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0;
+}
+
+fieldset {
+  legend {
+    font-weight: bold;
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+legend {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "hksn", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti, "Microsoft YaHei";
+  color: @color-font;
+}
+
+//解决Chrome浏览器表单自动填充默认样式
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: inset 0 0 1000px #fff !important;
+  box-shadow: inset 0 0 1000px #fff !important;
+  -webkit-transition-delay: 9999s;
+  -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
+}
+
+#app {
+  height: 100%;
+}
