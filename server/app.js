@@ -20,6 +20,8 @@ app.use(httpLogger)
 
 // 参数
 var bodyParser = require('body-parser');
+
+// 请求大小限制
 app.use(bodyParser.json({
   limit: '50mb'
 }));

@@ -6,8 +6,6 @@
   text-rendering: optimizeLegibility;
 }
 
-
-
 body,
 blockquote,
 figure {
@@ -68,12 +66,12 @@ td {
 }
 
 fieldset {
-  legend {
+  /* legend {
     font-weight: bold;
     font-size: 14px;
     padding-left: 10px;
     padding-right: 10px;
-  }
+  } */
 }
 
 legend {
@@ -88,7 +86,7 @@ body {
   color: @color-font;
 }
 
-//解决Chrome浏览器表单自动填充默认样式
+/* 解决Chrome浏览器表单自动填充默认样式 */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

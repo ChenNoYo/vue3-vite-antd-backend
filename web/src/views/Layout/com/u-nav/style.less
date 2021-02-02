@@ -1,0 +1,19 @@
+.u-nav {
+	// background: @bg-nav;
+	background: var(--bg-nav);
+	height: 100%;
+	flex-shrink: 0;
+	&.active {
+		width: 200px;
+	}
+	.logo {
+		height: 50px;
+		line-height: 50px;
+		text-align: center;
+		color: #fff;
+		font-size: 24px;
+	}
+	.ant-menu {
+		height: calc(100% - 50px);
+	}
+}

@@ -2,11 +2,11 @@
  * @Descripttion: 
  * @Author: NoYo
  * @Date: 2020-12-10 08:51:34
- * @LastEditTime: 2020-12-11 11:51:53
+ * @LastEditTime: 2021-02-01 14:35:37
  */
 const {
   Admin,
-  User
+  Menu
 } = require('../model');
 
 const SysController = {
@@ -15,7 +15,12 @@ const SysController = {
     const target = req.body;
     let user = await Admin.findOne(target)
     if (user) {
-      req.session.user = user
+      req.session.user = {
+        permission: user.permission,
+        _id: user._id,
+        userName: user.userName,
+        role: user.role
+      }
       res.json({
         status: 200,
         response: user
@@ -36,12 +41,19 @@ const SysController = {
   },
   // 获取当前用户信息
   getUser (req, res) {
-    console.log('req, res: ', req, res);
     res.json({
       status: 200,
       response: {
         user: req.session.user
       }
+    })
+  },
+  // 获取菜单树
+  async getMenuTree (req, res) {
+    let menu = await Menu.find()
+    res.json({
+      status: 200,
+      response: menu
     })
   }
 }

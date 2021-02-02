@@ -2,7 +2,7 @@
  * @Descripttion: 
  * @Author: NoYo
  * @Date: 2020-12-10 11:38:13
- * @LastEditTime: 2020-12-10 13:47:21
+ * @LastEditTime: 2020-12-31 14:20:27
 -->
 <template>
   <teleport to='body'>
@@ -24,7 +24,6 @@ import {
   toRefs,
   watch,
   watchEffect,
-  getCurrentInstance
 } from 'vue'
 export default {
   name: '',
@@ -43,7 +42,6 @@ export default {
     }
   },
   setup (props) {
-    const { ctx } = getCurrentInstance()
     const state = reactive({ count: 0 })
     function getStyle () {
       return {
@@ -61,7 +59,6 @@ export default {
 </script>
 
 <style lang="less">
-@import "../assets/css/theme.less";
 .u-modal {
   position: fixed;
   top: 0;
@@ -74,8 +71,8 @@ export default {
 }
 .modal-box {
   background: #fff;
-  .border;
-  .shadow;
+  // .border;
+  // .shadow;
   padding: 16px;
 }
 </style>

@@ -2,12 +2,12 @@
  * @Descripttion: 
  * @Author: NoYo
  * @Date: 2020-12-09 15:14:05
- * @LastEditTime: 2020-12-11 12:03:24
+ * @LastEditTime: 2021-01-29 14:39:13
  */
 import { create } from 'axios'
 import qs from 'qs'
 import { message } from 'ant-design-vue';
-import router from "/@/router/index.js";
+import router from "../router/index.js";
 import {
   baseUrl
 } from '../environment/index.js'
@@ -29,7 +29,7 @@ let axiosErrorHandler = (code, msg) => {
     message.warn(msg, 1, () => {
       router.push({ path: '/Login' })
     })
-    return false
+    return true
   } else if (code === 500) {
     message.error(msg)
     return false

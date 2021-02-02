@@ -1,22 +1,24 @@
-@color-blue: #1E9FFF;
-@color-green: #81C868;
-@color-orange: #F7BF57;
-@color-red: #F05050;
-@color-light-red: #fff0f0;
-@color-theme: #484e5e;
 
-@color-font: #222222;
-@color-font-gray: #606266;
-@color-font-red: #FA3B3B;
-@color-word-red: #F63535;
-
-@color-border: rgba(236, 240, 241);
-@color-shadow: rgba(236, 240, 241, 0.1);
-@color-bg1: #f1f2f6;
-@color-bg2: #01204f;
-@sd:8px;
-@md:16px;
-@bd:24px;
+:root{
+  --blue: #1E9FFF;
+  --green: #81C868;
+  --orange: #F7BF57;
+  --red: #F05050;
+  --light-red: #fff0f0;
+  --theme: #484e5e;
+  
+  --font: #222222;
+  --font-gray: #606266;
+  --font-red: #FA3B3B;
+  --word-red: #F63535;
+  
+  --border: rgba(236, 240, 241);
+  --shadow: rgba(236, 240, 241, 0.1);
+  --bg-nav: rgb(0, 21, 41);
+  --sd:8px;
+  --md:16px;
+  --bd:24px;
+}
 
 // @font-face {
 //   font-family: "hksn";
@@ -33,12 +35,13 @@
 }
 
 .border {
-  border: 1px solid @color-border;
+  border: 1px solid var(--border);
   border-radius: 8px;
 }
 
 .df {
   display: flex;
+  align-items: center;
 }
 
 .jc-c {
@@ -91,16 +94,6 @@
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
 }
 
-#nprogress {
-  .bar {
-    background-image: linear-gradient(120deg, #f16f5c 0, #f16f5c 12.5%, #5b56dd 0, #5b56dd 25%, #e15ced 0, #e15ced 37.5%, #27e559 0, #27e559 50%, #18c8c9 0, #18c8c9 62.5%, #dc8987 0, #dc8987 75%, #bb83d6 0, #bb83d6 87.5%, #e774bd 0, #e774bd);
-  }
-
-  .spinner {
-    display: none;
-  }
-}
-
 .canClick {
   color: #2d64b3;
   cursor: pointer;
@@ -151,8 +144,6 @@
 .blue {
   background: #3e89fa;
 }
-
-
 
 
 // // 背景图片地址和大小
@@ -237,4 +228,9 @@
 .fj(@type: space-between) {
   display: flex;
   justify-content: @type;
+}
+.el1{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
