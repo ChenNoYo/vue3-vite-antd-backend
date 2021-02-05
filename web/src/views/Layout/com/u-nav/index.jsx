@@ -43,9 +43,6 @@ export default defineComponent(() => {
 			}
 		]
 	})
-	watchEffect(() => {
-		console.log(route)
-	})
 	const renderMenuItem = (item) => {
 		return (
 			<a-menu-item
@@ -76,7 +73,6 @@ export default defineComponent(() => {
 		)
 	}
 	const linkTo = (item) => {
-		console.log('item: ', item)
 		router.push({ name: item.name })
 	}
 	const changeCollapse = (e) => {

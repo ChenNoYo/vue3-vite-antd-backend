@@ -6,9 +6,9 @@ import {
 	watch,
 	watchEffect,
 	getCurrentInstance,
-	defineComponent,
+	defineComponent
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 export default defineComponent(() => {
-	return () => <div>role</div>
+	return () => <div class="page">role</div>
 })

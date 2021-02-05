@@ -1,28 +1,61 @@
-/*
- * @Descripttion: 
- * @Author: NoYo
- * @Date: 2020-12-29 15:54:42
- * @LastEditTime: 2021-01-29 09:50:22
- */
+import { setToken, removeToken } from '/@/config/auth'
+import api from '/@/api'
+import router from '/@/router'
+const state = {
+	userInfo: {}
+}
+const getters = {
+	userInfo: (state) => {
+		return state.userInfo
+	}
+}
+const mutations = {
+	SET_USERINFO: (state, userInfo) => {
+		state.userInfo = userInfo
+	},
+	RESET_USERINFO: (state, userInfo) => {
+		state.userInfo = {}
+	}
+}
+
+const actions = {
+	async login ({ commit }, userInfo) {
+		try {
+			const res = await api.login(userInfo)
+			if (res.status === 200) {
+				setToken()
+				return
+			}
+		} catch (e) {
+			return e
+		}
+	},
+	async getUserInfo ({ commit }) {
+		try {
+			const res = await api.getUserInfo()
+			let { user } = res
+			commit('SET_USERINFO', user)
+			return Promise.resolve(res)
+		} catch (e) {
+			return Promise.reject()
+		}
+	},
+	async logout ({ commit }) {
+		try {
+			const res = await api.logout()
+			commit('RESET_USERINFO')
+			removeToken()
+			return Promise.resolve()
+		} catch (e) {
+			return Promise.reject()
+		}
+	}
+}
+
 export default {
-  namespaced: true,//使用命名空间，这样只在局部使用
-  state () {
-    return {
-      user: {},
-    };
-  },
-  getters: {
-    user (state) {
-      return state.user
-    },
-  },
-  mutations: {
-    // 保存用户信息
-    setUser: (state, user) => {
-      state.user = user
-      window.localStorage.setItem('userName', user.userName)
-    },
-  },
-  actions: {
-  },
+	namespaced: true,
+	state,
+	getters,
+	mutations,
+	actions
 }

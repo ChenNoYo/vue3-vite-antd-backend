@@ -1,7 +1,37 @@
-.ant-form{
-  // padding: 16px;
-  .form-btns{
-    display: flex;
-    justify-content: center;
-  }
+.ant-form {
+	// padding: 16px;
+	.form-btns {
+		display: flex;
+		justify-content: center;
+	}
+}
+.page {
+	height: 100%;
+	padding: var(--sd);
+	background: #fff;
+	&.hasTree {
+		background: #f0f2f5;
+		display: flex;
+		padding: 0;
+		.ant-tree {
+			width: 300px;
+			padding: var(--sd);
+			background: #fff;
+			margin-right: var(--md);
+			font-size: var(--fs);
+		}
+		.u-table {
+			flex: 1;
+			padding: var(--sd);
+			background: #fff;
+		}
+	}
+}
+.model-footer {
+	display: flex;
+	justify-content: center;
+}
+.table-action {
+	display: flex;
+	justify-content: space-around;
 }

@@ -3,7 +3,6 @@ module.exports = {
 	tabWidth: 4,
 	useTabs: true,
 	semi: false, // 未尾逗号
-	singleQuote: true,
 	semi: false,
 	vueIndentScriptAndStyle: true,
 	singleQuote: true, // 单引号

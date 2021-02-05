@@ -31,10 +31,10 @@ let axiosErrorHandler = (code, msg) => {
     })
     return true
   } else if (code === 500) {
-    message.error(msg)
+    message.error({ content: msg || '未知错误', key: 'message' })
     return false
   } else {
-    message.warn(msg)
+    message.warn({ content: msg || '未知错误', key: 'message' })
     return false
   }
 }
@@ -53,9 +53,9 @@ axios.interceptors.response.use(
   res => {
     res.data.isSuccess = axiosErrorHandler(res.data.status, res.data.message)
     if (res.data.isSuccess) {
-      return Promise.resolve(res.data)
+      return Promise.resolve(res.data.response)
     } else {
-      return Promise.reject(res.data)
+      return Promise.reject(res.data.message)
     }
   },
   err => {

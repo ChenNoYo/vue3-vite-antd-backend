@@ -6,9 +6,9 @@ import {
 	watch,
 	watchEffect,
 	getCurrentInstance,
-	defineComponent,
+	defineComponent
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 export default defineComponent(() => {
-	return () => <div>home</div>
+	return () => <div class="page">home</div>
 })

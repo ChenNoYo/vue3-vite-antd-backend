@@ -2,6 +2,7 @@ import { defineComponent, Transition } from 'vue'
 
 import UHeader from './com/u-header'
 import UNav from './com/u-nav'
+import Breadcrumb from './com/breadcrumb'
 
 export default defineComponent(() => {
 	const slots = {
@@ -16,8 +17,11 @@ export default defineComponent(() => {
 			<UNav></UNav>
 			<div class="layout-container">
 				<UHeader></UHeader>
+				<Breadcrumb></Breadcrumb>
 				<div class="show-container">
-					<router-view v-slots={slots}></router-view>
+					<div class="page-container">
+						<router-view v-slots={slots}></router-view>
+					</div>
 				</div>
 			</div>
 		</div>
