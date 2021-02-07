@@ -41,7 +41,6 @@ export default defineComponent({
 		})
 		let tableRef = null
 		function getTable (param) {
-			param = Object.assign(param, toRaw(filterForm))
 			return $api.sys.permission.page(toRaw(param))
 		}
 		function showEdit (data) {
@@ -78,6 +77,7 @@ export default defineComponent({
 						canEdit: true,
 						getTable,
 						columns,
+						filterForm
 					}}
 					onShowEdit={showEdit}
 					onDel={del} />

@@ -57,7 +57,13 @@ export default defineComponent({
 		}
 		function getTableList () {
 			state.tableLoading = true
+			// 基本参数
 			let param = { pageSize: state.pageSize, pageNum: state.pageNum, keyWord: state.keyWord }
+			// 合并过滤
+			if (props.tableConfig.filterForm) {
+				param = Object.assign(param, props.tableConfig.filterForm)
+			}
+			// 去空
 			Object.keys(param).forEach(key => {
 				let value = param[key]
 				if (!value) {
@@ -66,6 +72,7 @@ export default defineComponent({
 					param[key] = typeof param[key] === 'string' ? param[key].trim() : param[key]
 				}
 			})
+			// 获取表格数据
 			props.tableConfig
 				.getTable(param)
 				.then((res) => {
@@ -113,6 +120,7 @@ export default defineComponent({
 								vModel={[state.keyWord, 'value']}
 								placeholder="请输入关键字"
 								size="large"
+								onKeyUp={(e) => { e.keyCode === 13 && getTableList() }}
 								onSearch={getTableList}
 								v-slots={{
 									enterButton: () => (
