@@ -1,17 +1,15 @@
-const { Admin, Menu } = require('../model')
-const { getPage } = require('./common')
+const { User, Menu, Role, Permission } = require('../model')
+const { Page, Create, Detail, Update, Del, getConfig } = require('./common')
 function getMenu (data, parentCode) {
   let codes = data.map(item => item.parentCode)
-  console.log('codes: ', codes);
   let parent = []
   codes.forEach((code, i) => {
-    console.log(code == parentCode)
     if (code == parentCode) {
       parent.push(data[i])
     }
   })
+  // 获取下级    
   parent.forEach(menu => {
-    console.log(codes.indexOf(menu.menuCode))
     if (codes.indexOf(menu.menuCode) !== -1) {
       menu.children = getMenu(data, menu.menuCode)
     }
@@ -23,7 +21,7 @@ const SysController = {
   menu: {
     // 获取菜单树
     async tree (req, res) {
-      let menu = await Menu.find({}, {}, { lean: true })
+      let menu = await Menu.find({}, {}, { sort: { ranking: 1 }, lean: true })
       let menuTree = getMenu(menu, '0')
       res.json({
         status: 200,
@@ -32,77 +30,72 @@ const SysController = {
     },
     // 获取菜单列表
     async page (req, res) {
-      let { menuCode } = req.query
-      let response = await getPage(Menu, { parentCode: menuCode }, { ranking: 1, createTime: 1 }, req)
+      let { parentCode } = req.query
+      await Page(Menu, { parentCode }, { ranking: 1, createTime: 1 }, req, res)
+    },
+    // 新增菜单
+    async create (req, res) {
+      let form = req.body
+      Create(Menu, { menuCode: form.menuCode }, form, res)
+    },
+    // 菜单详情
+    async detail (req, res) {
+      Detail(Menu, req, res)
+    },
+    // 编辑菜单
+    async update (req, res) {
+      Update(Menu, req, res)
+    },
+    // 删除菜单
+    async del (req, res) {
+      Del(Menu, req, res)
+    }
+  },
+  // 角色
+  role: {
+    // 获取列表
+    async page (req, res) {
+      Page(Role, {}, { ranking: 1, createTime: 1 }, req, res)
+    }
+  },
+  // 权限
+  permission: {
+    // 获取列表
+    async page (req, res) {
+      let configMap = await getConfig()
+      const keyWordReg = new RegExp(req.query.keyWord, 'i')
+      let response = await Page(Permission, {
+        // 模糊搜索
+        $or: [
+          { permissionName: { $regex: keyWordReg } },
+          { permissionCode: { $regex: keyWordReg } },
+          { permissionDes: { $regex: keyWordReg } }
+        ]
+      }, { permissionType: 1, createTime: 1 }, req)
+      response.page.forEach(item => {
+        item.permissionType = configMap.permissionType[item.permissionType]
+      })
       res.json({
         status: 200,
         response
       })
     },
-    // 新增菜单
+    // 新增
     async create (req, res) {
       let form = req.body
-      let sameMenuCode = await Menu.find({ menuCode: form.menuCode })
-      if (sameMenuCode && sameMenuCode.length) {
-        res.json({
-          status: 400,
-          message: '菜单编号唯一,不可与其他重复'
-        })
-      } else {
-        const newMenu = new Menu(form)
-        await newMenu.save()
-        res.json({
-          status: 200
-        })
-      }
-
+      Create(Permission, { permissionCode: form.permissionCode }, form, res)
     },
-    // 菜单详情
+    // 详情
     async detail (req, res) {
-      let response = await Menu.findOne(req.query)
-      if (response) {
-        res.json({
-          status: 200,
-          response
-        })
-      } else {
-        res.json({
-          status: 400,
-          message: '该数据不存在或丢失'
-        })
-      }
+      Detail(Permission, req, res)
     },
-    // 编辑菜单
+    // 编辑
     async update (req, res) {
-      let form = req.body
-      await Menu.findOneAndUpdate({
-        _id: form._id
-      }, {
-        menuName: form.menuName,
-        ranking: form.ranking,
-        modifiedTime: Date.now()
-      })
-      res.json({
-        status: 200
-      })
+      Update(Permission, req, res)
     },
-    // 删除菜单
+    // 删除
     async del (req, res) {
-      let { ids } = req.body
-      console.log('ids: ', ids);
-      console.log(ids.map((_id) => {
-        return { _id }
-      }))
-      await Menu.remove({
-        _id: {
-          $in: ids.map((_id) => {
-            return { _id }
-          })
-        }
-      })
-      res.json({
-        status: 200
-      })
+      Del(Permission, req, res)
     },
   }
 }

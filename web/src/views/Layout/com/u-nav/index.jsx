@@ -28,25 +28,15 @@ export default defineComponent(() => {
 		selectedKeys: computed(() => {
 			return [route.name]
 		}),
-		menuTree: [
-			{
-				menuName: '首页',
-				name: 'home'
-			},
-			{
-				menuName: '系統設置',
-				name: 'sys',
-				children: [
-					{ menuName: '菜单设置', name: 'menu' },
-					{ menuName: '角色设置', name: 'role' }
-				]
-			}
-		]
+		menuTree: computed(() => {
+			return $store.getters['sys/menuTree']
+		})
 	})
+	$store.dispatch('sys/getMenuTree')
 	const renderMenuItem = (item) => {
 		return (
 			<a-menu-item
-				key={item.name}
+				key={item.menuCode}
 				onClick={() => {
 					linkTo(item)
 				}}>
@@ -65,7 +55,7 @@ export default defineComponent(() => {
 			)
 		}
 		return (
-			<a-sub-menu key={subMemu.name} v-slots={slots}>
+			<a-sub-menu key={subMemu.menuCode} v-slots={slots}>
 				{subMemu.children.map((menuItem) => {
 					return renderMenuItem(menuItem)
 				})}
@@ -73,7 +63,7 @@ export default defineComponent(() => {
 		)
 	}
 	const linkTo = (item) => {
-		router.push({ name: item.name })
+		router.push({ path: '/' + item.menuCode })
 	}
 	const changeCollapse = (e) => {
 		state.collapsed = e

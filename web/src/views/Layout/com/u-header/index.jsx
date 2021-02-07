@@ -22,13 +22,13 @@ export default defineComponent(() => {
 		$router
 	} = getCurrentInstance().appContext.config.globalProperties
 	const userInfo = $store.getters['user/userInfo']
-	function handleChange() {}
-	function logout() {
+	function handleChange () { }
+	function logout () {
 		$confirm({
 			okText: '确定',
 			cancelText: '取消',
 			content: '确定退出账号吗',
-			onOk() {
+			onOk () {
 				$store.dispatch('user/logout').then(() => {
 					$router.push({ path: '/login' })
 				})

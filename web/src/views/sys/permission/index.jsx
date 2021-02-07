@@ -2,6 +2,7 @@ import { defineComponent, reactive, getCurrentInstance, onMounted, ref, toRaw, w
 import useForm from '/@/mixins/useForm'
 import UTable from '/@/components/u-table/index.jsx'
 import { RuleRequire } from '/@/config/rules.js'
+import Configs from '/@/mixins/configs.js'
 export default defineComponent({
 	setup () {
 		const {
@@ -10,73 +11,67 @@ export default defineComponent({
 			$message,
 		} = getCurrentInstance().appContext.config.globalProperties
 		const state = reactive({
-			menuCode: '0',
-			visible: false,
-			menuTree: computed(() => {
-				return $store.getters['sys/menuTree']
-			})
+			visible: false
 		})
-		// 菜单
-		onMounted(() => {
-			getMenuTree()
-		})
-		function getMenuTree () {
-			$store.dispatch('sys/getMenuTree')
-		}
-		function onSelect (selectedKeys, info) {
-			state.menuCode = selectedKeys[0] || '0'
-			tableRef.reLoad()
-		}
-		function renderTree () {
-			return <a-tree
-				replaceFields={
-					{ title: 'menuName', key: 'menuCode' }
-				}
-				onSelect={onSelect}
-				treeData={state.menuTree} />
-		}
-
 		// 表格
 		const columns = [
 			{
-				title: '菜单名称',
-				dataIndex: 'menuName',
+				title: '权限名称',
+				dataIndex: 'permissionName',
 				align: 'center'
 			},
 			{
-				title: '菜单编号',
-				dataIndex: 'menuCode',
+				title: '权限编号',
+				dataIndex: 'permissionCode',
 				align: 'center'
 			},
 			{
-				title: '排序',
-				dataIndex: 'ranking',
+				title: '权限类型',
+				dataIndex: 'permissionType',
 				align: 'center'
+			},
+			{
+				title: '权限描述',
+				dataIndex: 'permissionDes',
+				align: 'left'
 			}
 		]
+		let filterForm = reactive({
+			permissionType: null
+		})
 		let tableRef = null
 		function getTable (param) {
-			param.parentCode = state.menuCode
-			return $api.sys.menu.page(param)
+			param = Object.assign(param, toRaw(filterForm))
+			return $api.sys.permission.page(toRaw(param))
 		}
 		function showEdit (data) {
 			if (data._id) {
 				form._id = data._id
 			} else {
 				form._id && (delete form._id)
-				form.parentCode = state.menuCode
 			}
 			state.visible = true
 		}
 		function del (ids) {
-			$api.sys.menu.del({ ids }).then(() => {
+			$api.sys.permission.del({ ids }).then(() => {
 				$message.success({ content: '删除成功', key: 'message' })
 				closeModel()
 			})
 		}
 		function renderTable () {
+			let slots = {
+				filterForm: () => (
+					<a-form model={filterForm} layout="inline">
+						<a-form-item label="权限类型"  >
+							<a-radio-group vModel={[filterForm.permissionType, 'value']} options={Configs.value.permissionType}>
+							</a-radio-group>
+						</a-form-item>
+					</a-form >
+				)
+			}
 			return (
 				<UTable
+					v-slots={slots}
 					onLoad={(ref) => { tableRef = ref }}
 					ref="table"
 					tableConfig={{
@@ -90,28 +85,30 @@ export default defineComponent({
 		}
 		// 弹窗
 		let form = reactive({
-			menuName: '',
-			menuCode: '',
-			ranking: 9999,
-			parentCode: '0'
+			permissionName: '',
+			permissionCode: '',
+			permissionType: '',
+			permissionDes: ''
 		})
 		function getDetail (_id) {
-			$api.sys.menu.detail({ _id }).then(res => {
-				form.menuName = res.menuName
-				form.menuCode = res.menuCode
-				form.ranking = res.ranking
-				form.parentCode = res.parentCode
+			$api.sys.permission.detail({ _id }).then(res => {
+				form.permissionName = res.permissionName
+				form.permissionCode = res.permissionCode
+				form.permissionType = res.permissionType
+				form.permissionDes = res.permissionDes
 			})
 		}
 		const rules = reactive({
-			menuName: [RuleRequire('菜单名称')],
-			menuCode: [RuleRequire('菜单编号')]
+			permissionName: [RuleRequire('权限名称')],
+			permissionCode: [RuleRequire('权限编号')],
+			permissionType: [RuleRequire('权限类型')],
+			permissionDes: [RuleRequire('权限描述')],
 		})
 		const { onSubmit, validateInfos } = useForm(form, rules, state, getDetail, confirm)
 		function confirm (formData) {
 			if (formData._id) {
 				// 编辑
-				$api.sys.menu.update(formData).then((res) => {
+				$api.sys.permission.update(formData).then((res) => {
 					$message.success({ content: '编辑成功', key: 'message' })
 					closeModel()
 				}).catch(err => {
@@ -119,7 +116,7 @@ export default defineComponent({
 				})
 			} else {
 				// 新增
-				$api.sys.menu.create(formData).then((res) => {
+				$api.sys.permission.create(formData).then((res) => {
 					$message.success({ content: '新增成功', key: 'message' })
 					closeModel()
 				}).catch(err => {
@@ -129,7 +126,6 @@ export default defineComponent({
 		}
 		function closeModel () {
 			state.visible = false
-			getMenuTree()
 			tableRef.reLoad()
 		}
 		function renderModel () {
@@ -146,35 +142,33 @@ export default defineComponent({
 				<a-modal
 					centered
 					vModel={[state.visible, 'visible']}
-					title={'菜单' + (form._id ? '编辑' : '新增')}
+					title={'权限' + (form._id ? '编辑' : '新增')}
 					v-slots={slots}>
 					<a-form model={form} label-col={{ span: 6 }} wrapper-col={{ span: 18 }}>
-						<a-form-item label="上级菜单编号">
-							<a-input value={form.parentCode} disabled></a-input>
-						</a-form-item>
-						<a-form-item label="菜单名称" {...validateInfos.menuName}>
+						<a-form-item label="权限名称" {...validateInfos.permissionName}>
 							<a-input
-								vModel={[form.menuName, 'value']}
-								placeholder="请输入菜单名称"></a-input>
+								vModel={[form.permissionName, 'value']}
+								placeholder="请输入权限名称"></a-input>
 						</a-form-item>
-						<a-form-item label="菜单编号"  {...validateInfos.menuCode}>
+						<a-form-item label="权限编号"  {...validateInfos.permissionCode}>
 							<a-input
-								vModel={[form.menuCode, 'value']}
+								vModel={[form.permissionCode, 'value']}
 								disabled={form._id ? true : false}
-								placeholder="请输入菜单编号"></a-input>
+								placeholder="请输入权限编号"></a-input>
 						</a-form-item>
-						<a-form-item label="菜单排序" {...validateInfos.ranking}>
-							<a-input
-								vModel={[form.ranking, 'value']}
-								placeholder="请输入菜单排序"></a-input>
+						<a-form-item label="权限类型"  {...validateInfos.permissionType} >
+							<a-radio-group vModel={[form.permissionType, 'value']} options={Configs.value.permissionType}>
+							</a-radio-group>
+						</a-form-item>
+						<a-form-item label="权限描述" {...validateInfos.permissionDes}>
+							<a-textarea vModel={[form.permissionDes, 'value']} placeholder="请输入权权限描述" rows="3" />
 						</a-form-item>
 					</a-form>
-				</a-modal>
+				</a-modal >
 			)
 		}
 		return () => (
-			<div class="page hasTree">
-				{renderTree()}
+			<div class="page">
 				{renderTable()}
 				{renderModel()}
 			</div>

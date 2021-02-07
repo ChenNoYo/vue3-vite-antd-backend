@@ -10,5 +10,5 @@ import {
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 export default defineComponent(() => {
-	return () => <div class="page">home</div>
+	return () => <div class="page" style={{ height: '3000px' }}>home</div>
 })

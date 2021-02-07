@@ -20,7 +20,7 @@ const routes = [
 		component: () => import('/@/views/login')
 	},
 	{
-		path: '/*',
+		path: '/:pathMatch(.*)*',
 		name: '404',
 		meta: { title: '404' },
 		component: () => import('/@/views/404/')

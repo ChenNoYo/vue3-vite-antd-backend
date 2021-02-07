@@ -6,9 +6,11 @@
  */
 import { createStore } from 'vuex'
 import user from './modules/user'
+import sys from './modules/sys'
 
 export default createStore({
 	modules: {
-		user
+		user,
+		sys
 	}
 })

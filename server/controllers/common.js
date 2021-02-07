@@ -1,10 +1,12 @@
 const { User, Config } = require('../model')
 async function getConfigs () {
   return new Promise((resolve, reject) => {
-    Config.find({}).exec((err, doc) => {
+    Config.find({}, {}, { lean: true }).exec((err, doc) => {
       let obj = {}
       if (doc) {
         doc.forEach(item => {
+          // 保证是字符串 
+          item.value = item.value + ''
           if (obj[item.name]) {
             obj[item.name].push(item)
           } else {
@@ -16,22 +18,31 @@ async function getConfigs () {
     })
   })
 }
-async function getConfig (name) {
+async function getConfig (names) {
   return new Promise((resolve, reject) => {
     Config.find({
-      name,
     }).exec((err, doc) => {
       if (doc) {
-        resolve(doc)
+        let configMap = {}
+        doc.forEach(item => {
+          !configMap[item.name] && (configMap[item.name] = {})
+          configMap[item.name][item.value] = item.label
+        })
+        resolve(configMap)
       } else {
         reject(err)
       }
     })
   })
 }
-// 列表方法
-async function getPage (model, query = {}, sort = {}, req) {
+// 列表
+async function Page (model, query = {}, sort = {}, req, res = null) {
   let { pageSize, pageNum } = req.query
+  req.query.pageSize && delete req.query.pageSize
+  req.query.pageNum && delete req.query.pageNum
+  req.query.keyWord && delete req.query.keyWord
+  query = Object.assign(req.query, query)
+  console.log('query: ', query);
   let response = await new Promise((resolve, reject) => {
     pageNum = pageNum ? parseInt(pageNum) : 1
     pageSize = pageSize ? parseInt(pageSize) : 10
@@ -58,10 +69,92 @@ async function getPage (model, query = {}, sort = {}, req) {
   } else {
     response.total = 0
   }
-  return response
+  if (res) {
+    res.json({
+      status: 200,
+      response
+    })
+  } else {
+    return response
+  }
+}
+// 新增 
+async function Create (model, query = {}, form, res = null) {
+  let sameCode = await model.find(query)
+  if (sameCode && sameCode.length) {
+    res.json({
+      status: 400,
+      message: '编号唯一,不可重复'
+    })
+  } else {
+    const newDoc = new model(form)
+    let doc = await newDoc.save()
+    if (res) {
+      res.json({
+        status: 200
+      })
+    } else {
+      return doc
+    }
+  }
+}
+// 详情
+async function Detail (model, req, res = null) {
+  let response = await model.findOne(req.query)
+  if (response) {
+    res.json({
+      status: 200,
+      response
+    })
+  } else {
+    res.json({
+      status: 400,
+      message: '该数据不存在或丢失'
+    })
+  }
+}
+// 编辑
+async function Update (model, req, res = null) {
+  let form = req.body
+  let updateForm = Object.assign(form, { modifiedTime: Date.now() })
+  let newDoc = await model.findOneAndUpdate({
+    _id: form._id
+  }, updateForm, {
+    new: true
+  })
+  if (res) {
+    res.json({
+      status: 200
+    })
+  } else {
+    return newDoc
+  }
+
+}
+// 删除
+async function Del (model, req, res = null) {
+  let { ids } = req.body
+  await model.remove({
+    _id: {
+      $in: ids.map((_id) => {
+        return { _id }
+      })
+    }
+  })
+  if (res) {
+    res.json({
+      status: 200
+    })
+  } else {
+    return
+  }
 }
 module.exports = {
   getConfigs,
   getConfig,
-  getPage
+  Page,
+  Create,
+  Detail,
+  Update,
+  Del
 }

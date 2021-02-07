@@ -2,18 +2,45 @@
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	.filter-form {
+		margin-bottom: var(--sd);
+		background: #fff;
+		padding: var(--sd);
+		.ant-form-item {
+			margin-bottom: 0;
+		}
+	}
+	.ant-row {
+		.ant-col-16 {
+			padding-right: var(--md);
+			.ant-form-item-label {
+				padding-left: var(--md);
+			}
+		}
+		.ant-col-8 {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			.ant-btn-primary {
+				width: 88px;
+			}
+		}
+	}
 	.top-btns {
 		display: flex;
 		justify-content: space-between;
 		padding: var(--sd);
+		background: #fff;
 	}
 	.ant-table-wrapper {
 		flex: 1;
+		background: #fff;
+		padding: var(--sd);
 		overflow-y: auto;
 	}
 	.ant-pagination {
-		margin-top: var(--sd);
+		padding: var(--sd) var(--md);
 		text-align: right;
-		padding-right: var(--md);
+		background: #fff;
 	}
 }

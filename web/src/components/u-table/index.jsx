@@ -1,14 +1,12 @@
 import {
 	onMounted,
-	onUnmounted,
 	reactive,
-	toRefs,
-	watch,
-	watchEffect,
 	getCurrentInstance,
-	defineComponent
+	defineComponent,
+	ref,
+	toRaw
 } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { SearchOutlined } from '@ant-design/icons-vue';
 export default defineComponent({
 	props: {
 		tableConfig: {
@@ -24,7 +22,7 @@ export default defineComponent({
 			}
 		}
 	},
-	setup (props, { emit }) {
+	setup (props, { emit, slots }) {
 		const {
 			$confirm,
 			$message
@@ -36,7 +34,8 @@ export default defineComponent({
 			total: 100,
 			columns: [],
 			tableList: [],
-			selectedRowKeys: []
+			selectedRowKeys: [],
+			keyWord: ''
 		})
 		onMounted(() => {
 			state.columns = []
@@ -58,8 +57,17 @@ export default defineComponent({
 		}
 		function getTableList () {
 			state.tableLoading = true
+			let param = { pageSize: state.pageSize, pageNum: state.pageNum, keyWord: state.keyWord }
+			Object.keys(param).forEach(key => {
+				let value = param[key]
+				if (!value) {
+					delete param[key]
+				} else {
+					param[key] = typeof param[key] === 'string' ? param[key].trim() : param[key]
+				}
+			})
 			props.tableConfig
-				.getTable({ pageSize: state.pageSize, pageNum: state.pageNum })
+				.getTable(param)
 				.then((res) => {
 					state.tableList = res.page
 					state.total = res.total
@@ -90,7 +98,55 @@ export default defineComponent({
 				$message.warning({ content: '列表选择不能为空', key: 'message' })
 			}
 		}
-		const slots = {
+		function userHandle (key, val) {
+			state[key] = val
+		}
+		function renderFilterForm () {
+			return (
+				<div class="filter-form">
+					<a-row>
+						<a-col span="16">
+							{slots.filterForm()}
+						</a-col>
+						<a-col span="8">
+							<a-input-search
+								vModel={[state.keyWord, 'value']}
+								placeholder="请输入关键字"
+								size="large"
+								onSearch={getTableList}
+								v-slots={{
+									enterButton: () => (
+										<a-button
+											type="primary"
+											size="large"
+											loading={state.tableLoading}
+											v-slots={{
+												icon: () => (
+													<SearchOutlined />
+												)
+											}}>
+											搜索</a-button>
+									)
+								}}
+							/>
+						</a-col>
+					</a-row>
+				</div >
+			)
+		}
+		function renderBtns () {
+			return (
+				<div class="top-btns">
+					<a-button type="primary" size="large" onClick={() => showEdit({})}>
+						新增
+				</a-button>
+					<a-button type="danger" size="large" disabled={state.selectedRowKeys.length == 0} onClick={delAll}>
+						删除
+				</a-button>
+				</div>
+			)
+		}
+		const tableSlots = {
 			action: ({ record }) => (
 				<div class="table-action">
 					{
@@ -105,16 +161,8 @@ export default defineComponent({
 		}
 		return () => (
 			<div class="u-table">
-				{props.tableConfig.canEdit && (
-					<div class="top-btns">
-						<a-button type="primary" size="large" onClick={() => showEdit({})}>
-							新增
-						</a-button>
-						<a-button type="danger" size="large" disabled={state.selectedRowKeys.length == 0} onClick={delAll}>
-							删除
-						</a-button>
-					</div>
-				)}
+				{slots.filterForm && renderFilterForm()}
+				{props.tableConfig.canEdit && renderBtns()}
 				<a-table
 					row-selection={{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }}
 					bordered
@@ -123,7 +171,7 @@ export default defineComponent({
 					columns={state.columns}
 					row-key={props.tableConfig.key || '_id'}
 					dataSource={state.tableList}
-					v-slots={slots}></a-table>
+					v-slots={tableSlots}></a-table>
 				<a-pagination
 					onChange={getTableList}
 					onShowSizeChange={getTableList}

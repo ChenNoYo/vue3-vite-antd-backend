@@ -30,10 +30,16 @@ const userchema = Schema({
     maxlength: 50
   },
   role: {
-    type: String
+    type: String,
+    required: true,
   },
-  permission: {
-    type: Array
+  createTime: {
+    type: Date,
+    default: Date.now
+  },
+  modifiedTime: {
+    type: Date,
+    default: Date.now
   }
 })
 // 菜单
@@ -47,7 +53,8 @@ const menuchema = Schema({
   menuCode: {
     // 菜单编号
     type: String,
-    required: true
+    required: true,
+    unmodifiable: true
   },
   ranking: {
     // 菜单排序
@@ -67,14 +74,82 @@ const menuchema = Schema({
     default: Date.now
   }
 })
+// 角色
+const rolechema = Schema({
+  id: ObjectId,
+  // 角色名称
+  roleName: {
+    type: String,
+    required: true,
+    maxlength: 20
+  },
+  // 角色编号
+  roleCode: {
+    type: String,
+    required: true,
+    maxlength: 20,
+    unmodifiable: true
+  },
+  // 角色权限
+  permission: {
+    type: Array,
+    required: true,
+  },
+  createTime: {
+    type: Date,
+    default: Date.now
+  },
+  modifiedTime: {
+    type: Date,
+    default: Date.now
+  }
+})
 // 权限
+const permissionchema = Schema({
+  id: ObjectId,
+  // 权限名称
+  permissionName: {
+    type: String,
+    required: true,
+    maxlength: 20
+  },
+  // 权限编号
+  permissionCode: {
+    type: String,
+    required: true,
+    maxlength: 20,
+    unmodifiable: true
+  },
+  // 权限类型 1 菜单 2 操作
+  permissionType: {
+    type: String,
+    required: true
+  },
+  // 权限描述
+  permissionDes: {
+    type: String,
+    required: true,
+  },
+  createTime: {
+    type: Date,
+    default: Date.now
+  },
+  modifiedTime: {
+    type: Date,
+    default: Date.now
+  }
+})
 
 const Config = model('Config', configchema)
 const User = model('User', userchema)
 const Menu = model('Menu', menuchema)
+const Role = model('Role', rolechema)
+const Permission = model('permission', permissionchema)
 
 module.exports = {
   Config,
   User,
-  Menu
+  Menu,
+  Role,
+  Permission
 }

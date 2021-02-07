@@ -10,10 +10,10 @@ const getters = {
 	}
 }
 const mutations = {
-	SET_USERINFO: (state, userInfo) => {
+	setUserInfo: (state, userInfo) => {
 		state.userInfo = userInfo
 	},
-	RESET_USERINFO: (state, userInfo) => {
+	resetUserInfo: (state, userInfo) => {
 		state.userInfo = {}
 	}
 }
@@ -21,32 +21,33 @@ const mutations = {
 const actions = {
 	async login ({ commit }, userInfo) {
 		try {
-			const res = await api.login(userInfo)
-			if (res.status === 200) {
-				setToken()
-				return
-			}
+			await api.common.login(userInfo)
+			setToken()
+			return Promise.resolve()
 		} catch (e) {
-			return e
+			console.log(e)
+			return Promise.reject(e)
 		}
 	},
 	async getUserInfo ({ commit }) {
 		try {
-			const res = await api.getUserInfo()
+			const res = await api.common.getUserInfo()
 			let { user } = res
-			commit('SET_USERINFO', user)
+			commit('setUserInfo', user)
 			return Promise.resolve(res)
 		} catch (e) {
-			return Promise.reject()
+			console.log(e)
+			return Promise.reject(e)
 		}
 	},
 	async logout ({ commit }) {
 		try {
-			const res = await api.logout()
-			commit('RESET_USERINFO')
+			await api.common.logout()
+			commit('resetUserInfo')
 			removeToken()
 			return Promise.resolve()
 		} catch (e) {
+			console.log(e)
 			return Promise.reject()
 		}
 	}
