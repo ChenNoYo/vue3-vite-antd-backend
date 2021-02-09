@@ -1,6 +1,6 @@
-/server/upload
-/server/upload
+/server/upload/
 /server/logs/
+/server/public/
 /server/environment/
 /server/node_modules/
 /web/node_modules/
