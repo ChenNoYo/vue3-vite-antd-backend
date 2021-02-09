@@ -57,7 +57,7 @@ export default defineConfig({
 		//是否自动注入动态导入的polyfill。
 		polyfillDynamicImport: true,
 		//指定输出目录
-		outDir: 'dist',
+		outDir: '../server/public',
 		//指定目录以将生成的动态自由嵌套在下
 		assetsDir: 'assets',
 		//小于此阈值的导入或引用资产将作为base64 URL内联，以避免额外的http请求。设置为0完全禁用内联。
