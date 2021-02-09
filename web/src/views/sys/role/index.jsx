@@ -1,5 +1,6 @@
 import { defineComponent, reactive, getCurrentInstance, onMounted, ref, toRaw, watch, watchEffect, computed } from 'vue'
 import useForm from '/@/mixins/useForm'
+import hasPermission from '/@/mixins/hasPermission'
 import UTable from '/@/components/u-table/index.jsx'
 import { RuleRequire } from '/@/config/rules.js'
 export default defineComponent({
@@ -25,10 +26,10 @@ export default defineComponent({
 				align: 'center'
 			},
 			{
-				title: '排序',
-				dataIndex: 'ranking',
-				align: 'center'
-			}
+				title: '角色描述',
+				dataIndex: 'roleDes',
+				align: 'left'
+			},
 		]
 		let tableRef = null
 		function getTable (param) {
@@ -41,6 +42,7 @@ export default defineComponent({
 				form._id && (delete form._id)
 			}
 			state.visible = true
+			getPermissionList()
 		}
 		function del (ids) {
 			$api.sys.role.del({ ids }).then(() => {
@@ -54,7 +56,7 @@ export default defineComponent({
 					onLoad={(ref) => { tableRef = ref }}
 					ref="table"
 					tableConfig={{
-						canEdit: true,
+						canEdit: hasPermission('roleEdit'),
 						getTable,
 						columns,
 					}}
@@ -63,21 +65,63 @@ export default defineComponent({
 			)
 		}
 		// 弹窗
-		let form = reactive({
+		const form = reactive({
 			roleName: '',
 			roleCode: '',
-			ranking: 9999
+			roleDes: '',
+			permission: []
 		})
+		const permissionList = reactive({
+			options: [],
+			indeterminate: false,
+			checkAll: false,
+			onCheckAllChange: (e) => {
+				if (e.target.checked) {
+					form.permission = permissionList.options.map(option => option.value)
+				} else {
+					form.permission = []
+				}
+			}
+		})
+		// 权限全选状态
+		watch(
+			[() => form.permission, () => permissionList.options],
+			() => {
+				checkPermission()
+			}
+		)
+		function checkPermission () {
+			let length = form.permission.length
+			permissionList.indeterminate = !!length && length < permissionList.options.length
+			if (permissionList.options.length) {
+				permissionList.checkAll = length === permissionList.options.length
+			}
+		}
+		function getPermissionList () {
+			if (!permissionList.options.length) {
+				$api.sys.permission.page({ pageSize: 999 }).then(res => {
+					permissionList.options = res.page.map(item => {
+						return {
+							label: item.permissionType + '/' + item.permissionName + ':' + item.permissionDes,
+							value: item.permissionCode
+						}
+					})
+				})
+			}
+		}
 		function getDetail (_id) {
 			$api.sys.role.detail({ _id }).then(res => {
 				form.roleName = res.roleName
 				form.roleCode = res.roleCode
-				form.ranking = res.ranking
+				form.roleDes = res.roleDes
+				form.permission = res.permission
 			})
 		}
 		const rules = reactive({
 			roleName: [RuleRequire('角色名称')],
-			roleCode: [RuleRequire('角色编号')]
+			roleCode: [RuleRequire('角色编号')],
+			roleDes: [RuleRequire('角色描述')],
+			permission: [RuleRequire('权限列表', 'array')]
 		})
 		const { onSubmit, validateInfos } = useForm(form, rules, state, getDetail, confirm)
 		function confirm (formData) {
@@ -118,6 +162,7 @@ export default defineComponent({
 					centered
 					vModel={[state.visible, 'visible']}
 					title={'角色' + (form._id ? '编辑' : '新增')}
+					width="800px"
 					v-slots={slots}>
 					<a-form model={form} label-col={{ span: 6 }} wrapper-col={{ span: 18 }}>
 						<a-form-item label="角色名称" {...validateInfos.roleName}>
@@ -131,13 +176,26 @@ export default defineComponent({
 								disabled={form._id ? true : false}
 								placeholder="请输入角色编号"></a-input>
 						</a-form-item>
-						<a-form-item label="排序" {...validateInfos.ranking}>
+						<a-form-item label="角色描述"  {...validateInfos.roleDes}>
 							<a-input
-								vModel={[form.ranking, 'value']}
-								placeholder="请输入排序"></a-input>
+								vModel={[form.roleDes, 'value']}
+								placeholder="请输入角色描述"></a-input>
+						</a-form-item>
+						<a-form-item label="权限列表" {...validateInfos.permission}>
+							<div style={{ borderBottom: '1px solid #E9E9E9' }}>
+								<a-checkbox
+									vModel={[permissionList.checkAll, 'checked']}
+									indeterminate={permissionList.indeterminate}
+									onChange={permissionList.onCheckAllChange}>
+									全选
+    								</a-checkbox>
+							</div>
+							<a-checkbox-group class="vertical"
+								vModel={[form.permission, 'value']}
+								options={permissionList.options} />
 						</a-form-item>
 					</a-form>
-				</a-modal>
+				</a-modal >
 			)
 		}
 		return () => (

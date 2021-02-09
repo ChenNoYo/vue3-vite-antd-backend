@@ -12,24 +12,33 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 // 配置
 const configchema = Schema({
   id: ObjectId,
-  name: String,
+  propName: String,
+  propCode: String,
   label: String,
   value: Number
 })
 
 const userchema = Schema({
   id: ObjectId,
+  // 用户账号
   userName: {
     type: String,
     required: true,
     maxlength: 20
   },
-  passWord: {
+  // 用户密码
+  password: {
     type: String,
     required: true,
     maxlength: 50
   },
+  // 用户角色
   role: {
+    type: String,
+    required: true,
+  },
+  // 用户状态
+  userStatu: {
     type: String,
     required: true,
   },
@@ -55,6 +64,16 @@ const menuchema = Schema({
     type: String,
     required: true,
     unmodifiable: true
+  },
+  // 权限编号
+  permissionCode: {
+    type: String,
+    required: true
+  },
+  // 是否显示
+  show: {
+    type: Boolean,
+    default: false
   },
   ranking: {
     // 菜单排序
@@ -89,6 +108,10 @@ const rolechema = Schema({
     required: true,
     maxlength: 20,
     unmodifiable: true
+  },
+  // 角色描述
+  roleDes: {
+    type: String
   },
   // 角色权限
   permission: {

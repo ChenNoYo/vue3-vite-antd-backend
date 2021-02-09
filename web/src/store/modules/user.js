@@ -2,11 +2,19 @@ import { setToken, removeToken } from '/@/config/auth'
 import api from '/@/api'
 import router from '/@/router'
 const state = {
-	userInfo: {}
+	userInfo: {},
+	permission: [],
+	menuTree: []
 }
 const getters = {
 	userInfo: (state) => {
 		return state.userInfo
+	},
+	permission: (state) => {
+		return state.permission
+	},
+	menuTree: (state) => {
+		return state.menuTree
 	}
 }
 const mutations = {
@@ -15,7 +23,13 @@ const mutations = {
 	},
 	resetUserInfo: (state, userInfo) => {
 		state.userInfo = {}
-	}
+	},
+	setPermission: (state, permission) => {
+		state.permission = permission
+	},
+	setMenuTree: (state, menuTree) => {
+		state.menuTree = menuTree
+	},
 }
 
 const actions = {
@@ -32,8 +46,10 @@ const actions = {
 	async getUserInfo ({ commit }) {
 		try {
 			const res = await api.common.getUserInfo()
-			let { user } = res
+			let { user, permission, menuTree } = res
 			commit('setUserInfo', user)
+			commit('setPermission', permission)
+			commit('setMenuTree', menuTree)
 			return Promise.resolve(res)
 		} catch (e) {
 			console.log(e)

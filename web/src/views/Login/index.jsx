@@ -14,7 +14,7 @@ import { useForm } from '@ant-design-vue/use'
 import './style.less'
 
 export default defineComponent({
-	setup() {
+	setup () {
 		let {
 			$api,
 			$message,
@@ -22,8 +22,8 @@ export default defineComponent({
 			$router
 		} = getCurrentInstance().appContext.config.globalProperties
 		const userRef = reactive({
-			userName: 'admin',
-			password: '123456'
+			userName: window.localStorage.getItem('userName') || '',
+			password: ''
 		})
 		const rulesRef = reactive({
 			userName: [
@@ -32,7 +32,7 @@ export default defineComponent({
 					message: '用户名不能为空'
 				}
 			],
-			password: [
+			passWord: [
 				{
 					required: true,
 					message: '密码不能为空'
@@ -45,15 +45,13 @@ export default defineComponent({
 			validate()
 				.then(() => {
 					$store.dispatch('user/login', toRaw(userRef)).then(() => {
+						window.localStorage.setItem('userName', userRef.userName)
 						$router.push({ path: '/main' })
 					})
 				})
 				.catch((err) => {
 					console.log('error', err)
 				})
-		}
-		const userHandle = (key, val) => {
-			userRef[key] = val
 		}
 		return () => (
 			<div class="login-page">

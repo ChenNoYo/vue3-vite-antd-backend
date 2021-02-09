@@ -51,6 +51,26 @@ export default {
 			const url = '/sys/role/page'
 			return axios.get(url, param)
 		},
+		// 新增角色
+		create (param) {
+			const url = '/sys/role/create'
+			return axios.post(url, param)
+		},
+		// 编辑角色
+		update (param) {
+			const url = '/sys/role/update'
+			return axios.post(url, param)
+		},
+		// 角色详情
+		detail (param) {
+			const url = '/sys/role/detail'
+			return axios.get(url, param)
+		},
+		// 角色删除
+		del (param) {
+			const url = '/sys/role/del'
+			return axios.post(url, param)
+		},
 	},
 	/**
 	 * ********************************** 权限 **********************************
@@ -89,5 +109,46 @@ export default {
 			const url = '/sys/permission/del'
 			return axios.post(url, param)
 		}
+	},
+	/**
+	 * ********************************** 用户 **********************************
+	 */
+	user: {
+		// 获取角色列表
+		page (param) {
+			const url = '/sys/user/page'
+			return axios.get(url, param)
+		},
+		// 新增权限
+		create (param) {
+			const url = '/sys/user/create'
+			return axios.post(url, param)
+		},
+		// 编辑权限
+		update (param) {
+			const url = '/sys/user/update'
+			return axios.post(url, param)
+		},
+		// 权限详情
+		detail (param) {
+			const url = '/sys/user/detail'
+			return axios.get(url, param)
+		},
+		// 删除权限
+		del (param) {
+			const url = '/sys/user/del'
+			return axios.post(url, param)
+		}
+	},
+	/**
+	 * ********************************** 配置 **********************************
+	 */
+	config: {
+		// 获取配置列表
+		page (param) {
+			const url = '/sys/config/page'
+			return axios.get(url, param)
+		}
 	}
+
 }

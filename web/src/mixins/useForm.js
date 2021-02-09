@@ -7,7 +7,7 @@ export default function (form, rules, state, getDetail = null, confirm = null) {
     if (state.visible && form._id) {
       getDetail && getDetail(form._id)
     }
-    if (!state.validate) {
+    if (!state.visible) {
       resetFields()
     }
   })

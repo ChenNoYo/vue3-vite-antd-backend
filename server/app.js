@@ -11,6 +11,9 @@ const urlencode = require('urlencode')
 const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
+// 权限管理
+require('./uitls/cache')
+
 // 日志打印
 const logger = require('./uitls/logger').logger
 const httpLogger = require('./uitls/logger').httpLogger
@@ -51,7 +54,7 @@ mongoose.connect(
     {
         auto_reconnect: true
     },
-    function (error) {}
+    function (error) { }
 )
 
 // session
@@ -86,6 +89,19 @@ app.use(function (req, res, next) {
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate')
     res.header('Pragma', 'no-cache')
     res.header('Expires', 0)
+    next()
+})
+app.use(function (req, res, next) {
+    // 参数去空
+    let param = req.query || req.body
+    Object.keys(param).forEach(key => {
+        let value = param[key]
+        if (!value) {
+            delete param[key]
+        } else {
+            param[key] = typeof param[key] === 'string' ? param[key].trim() : param[key]
+        }
+    })
     next()
 })
 

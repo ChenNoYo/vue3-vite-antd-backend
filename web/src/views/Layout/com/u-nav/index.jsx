@@ -29,10 +29,9 @@ export default defineComponent(() => {
 			return [route.name]
 		}),
 		menuTree: computed(() => {
-			return $store.getters['sys/menuTree']
+			return $store.getters['user/menuTree']
 		})
 	})
-	$store.dispatch('sys/getMenuTree')
 	const renderMenuItem = (item) => {
 		return (
 			<a-menu-item

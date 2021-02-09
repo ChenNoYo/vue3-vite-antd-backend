@@ -1,5 +1,6 @@
 import { defineComponent, reactive, getCurrentInstance, onMounted, ref, toRaw, watch, watchEffect, computed } from 'vue'
 import useForm from '/@/mixins/useForm'
+import hasPermission from '/@/mixins/hasPermission'
 import UTable from '/@/components/u-table/index.jsx'
 import { RuleRequire } from '/@/config/rules.js'
 export default defineComponent({
@@ -10,21 +11,21 @@ export default defineComponent({
 			$message,
 		} = getCurrentInstance().appContext.config.globalProperties
 		const state = reactive({
-			menuCode: '0',
+			parentCode: '0',
 			visible: false,
-			menuTree: computed(() => {
-				return $store.getters['sys/menuTree']
-			})
+			menuTree: []
 		})
 		// 菜单
 		onMounted(() => {
 			getMenuTree()
 		})
 		function getMenuTree () {
-			$store.dispatch('sys/getMenuTree')
+			$api.sys.menu.tree().then(res => {
+				state.menuTree = res
+			})
 		}
 		function onSelect (selectedKeys, info) {
-			state.menuCode = selectedKeys[0] || '0'
+			state.parentCode = selectedKeys[0] || '0'
 			tableRef.reLoad()
 		}
 		function renderTree () {
@@ -56,7 +57,7 @@ export default defineComponent({
 		]
 		let tableRef = null
 		function getTable (param) {
-			param.parentCode = state.menuCode
+			param.parentCode = state.parentCode
 			return $api.sys.menu.page(param)
 		}
 		function showEdit (data) {
@@ -64,8 +65,9 @@ export default defineComponent({
 				form._id = data._id
 			} else {
 				form._id && (delete form._id)
-				form.parentCode = state.menuCode
+				form.parentCode = state.parentCode
 			}
+			getPermissionList()
 			state.visible = true
 		}
 		function del (ids) {
@@ -80,7 +82,7 @@ export default defineComponent({
 					onLoad={(ref) => { tableRef = ref }}
 					ref="table"
 					tableConfig={{
-						canEdit: true,
+						canEdit: hasPermission('menuEdit'),
 						getTable,
 						columns,
 					}}
@@ -89,11 +91,13 @@ export default defineComponent({
 			)
 		}
 		// 弹窗
-		let form = reactive({
+		const form = reactive({
 			menuName: '',
 			menuCode: '',
 			ranking: 9999,
-			parentCode: '0'
+			permissionCode: null,
+			show: true,
+			parentCode: ''
 		})
 		function getDetail (_id) {
 			$api.sys.menu.detail({ _id }).then(res => {
@@ -101,11 +105,32 @@ export default defineComponent({
 				form.menuCode = res.menuCode
 				form.ranking = res.ranking
 				form.parentCode = res.parentCode
+				form.permissionCode = res.permissionCode
+				form.show = res.show
 			})
+		}
+		const permissionList = reactive({
+			options: [],
+			handleChange: (value) => {
+				// console.log(`selected ${value}`)
+			}
+		})
+		function getPermissionList () {
+			if (!permissionList.options.length) {
+				$api.sys.permission.page({ pageSize: 999 }).then(res => {
+					permissionList.options = res.page.map(item => {
+						return {
+							label: item.permissionType + ' / ' + item.permissionName + ' / ' + item.permissionCode + ' / ' + item.permissionDes,
+							value: item.permissionCode
+						}
+					})
+				})
+			}
 		}
 		const rules = reactive({
 			menuName: [RuleRequire('菜单名称')],
-			menuCode: [RuleRequire('菜单编号')]
+			menuCode: [RuleRequire('菜单编号')],
+			permissionCode: [RuleRequire('权限编号')]
 		})
 		const { onSubmit, validateInfos } = useForm(form, rules, state, getDetail, confirm)
 		function confirm (formData) {
@@ -150,7 +175,7 @@ export default defineComponent({
 					v-slots={slots}>
 					<a-form model={form} label-col={{ span: 6 }} wrapper-col={{ span: 18 }}>
 						<a-form-item label="上级菜单编号">
-							<a-input value={form.parentCode} disabled></a-input>
+							<a-input vModel={[form.parentCode, 'value']} disabled></a-input>
 						</a-form-item>
 						<a-form-item label="菜单名称" {...validateInfos.menuName}>
 							<a-input
@@ -162,6 +187,20 @@ export default defineComponent({
 								vModel={[form.menuCode, 'value']}
 								disabled={form._id ? true : false}
 								placeholder="请输入菜单编号"></a-input>
+						</a-form-item>
+						<a-form-item label="权限编号">
+							<a-select
+								vModel={[form.permissionCode, 'value']}
+								show-search
+								placeholder="请选择权限编号"
+								option-filter-prop="label"
+								onChange={permissionList.handleChange}
+								options={permissionList.options}
+							>
+							</a-select>
+						</a-form-item>
+						<a-form-item label="是否显示">
+							<a-switch vModel={[form.show, "checked"]} />
 						</a-form-item>
 						<a-form-item label="菜单排序" {...validateInfos.ranking}>
 							<a-input

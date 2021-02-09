@@ -3,42 +3,55 @@ import AppLayout from '/@/views/layout'
 const asyncRoutes = [
 	{
 		path: '/main',
-		name: 'main',
+		name: 'home',
 		redirect: '/home',
 		component: AppLayout,
-		meta: { title: '菜单' },
+		meta: { menu: true, title: '' },
 		children: [
 			{
 				path: '/home',
 				name: 'home',
-				meta: { title: '首页' },
+				meta: { menu: true, title: '' },
 				component: () => import('/@/views/home')
 			}
 		]
 	},
 	{
+		path: '/sys',
 		name: 'sys',
 		redirect: '/menu',
-		meta: { title: '系统设置' },
+		meta: { menu: true, title: '' },
 		component: AppLayout,
 		children: [
 			{
 				path: '/menu',
 				name: 'menu',
-				meta: { title: '菜单' },
+				meta: { menu: true, title: '' },
 				component: () => import('/@/views/sys/menu')
 			},
 			{
 				path: '/role',
 				name: 'role',
-				meta: { title: '角色' },
+				meta: { menu: true, title: '' },
 				component: () => import('/@/views/sys/role')
 			},
 			{
 				path: '/permission',
 				name: 'permission',
-				meta: { title: '权限' },
+				meta: { menu: true, title: '' },
 				component: () => import('/@/views/sys/permission')
+			},
+			{
+				path: '/user',
+				name: 'user',
+				meta: { menu: true, title: '' },
+				component: () => import('/@/views/sys/user')
+			},
+			{
+				path: '/config',
+				name: 'config',
+				meta: { menu: true, title: '' },
+				component: () => import('/@/views/sys/config')
 			},
 			{
 				path: '/:pathMatch(.*)*',

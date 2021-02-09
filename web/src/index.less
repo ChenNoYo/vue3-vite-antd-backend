@@ -1,8 +1,18 @@
 .ant-form {
 	// padding: 16px;
+	.ant-form-item {
+		margin-bottom: var(--md);
+	}
 	.form-btns {
 		display: flex;
 		justify-content: center;
+	}
+	.ant-checkbox-group {
+		&.vertical {
+			.ant-checkbox-group-item {
+				display: block;
+			}
+		}
 	}
 }
 .page {
@@ -30,4 +40,29 @@
 .table-action {
 	display: flex;
 	justify-content: space-around;
+}
+::-webkit-scrollbar-track {
+	width: 2px;
+	background: #e8e8e8;
+	-webkit-border-radius: 2em;
+	-moz-border-radius: 2em;
+	border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #d3d7d8;
+	background-clip: padding-box;
+	min-height: 28px;
+	-webkit-border-radius: 2em;
+	-moz-border-radius: 2em;
+	border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(#101f1c, 0.5);
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+	height: 8px;
 }

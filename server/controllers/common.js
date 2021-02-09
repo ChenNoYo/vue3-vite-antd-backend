@@ -7,10 +7,10 @@ async function getConfigs () {
         doc.forEach(item => {
           // 保证是字符串 
           item.value = item.value + ''
-          if (obj[item.name]) {
-            obj[item.name].push(item)
+          if (obj[item.propCode]) {
+            obj[item.propCode].push(item)
           } else {
-            obj[item.name] = [item]
+            obj[item.propCode] = [item]
           }
         })
       }
@@ -18,16 +18,19 @@ async function getConfigs () {
     })
   })
 }
-async function getConfig (names) {
+async function getConfig (propCodes) {
   return new Promise((resolve, reject) => {
     Config.find({
     }).exec((err, doc) => {
       if (doc) {
+        console.log('doc: ', doc);
         let configMap = {}
         doc.forEach(item => {
-          !configMap[item.name] && (configMap[item.name] = {})
-          configMap[item.name][item.value] = item.label
+          console.log('item.propCode: ', item.propCode);
+          !configMap[item.propCode] && (configMap[item.propCode] = {})
+          configMap[item.propCode][item.value] = item.label
         })
+        console.log('configMap: ', configMap);
         resolve(configMap)
       } else {
         reject(err)
@@ -42,7 +45,6 @@ async function Page (model, query = {}, sort = {}, req, res = null) {
   req.query.pageNum && delete req.query.pageNum
   req.query.keyWord && delete req.query.keyWord
   query = Object.assign(req.query, query)
-  console.log('query: ', query);
   let response = await new Promise((resolve, reject) => {
     pageNum = pageNum ? parseInt(pageNum) : 1
     pageSize = pageSize ? parseInt(pageSize) : 10

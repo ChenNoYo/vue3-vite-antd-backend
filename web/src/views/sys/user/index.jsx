@@ -2,8 +2,8 @@ import { defineComponent, reactive, getCurrentInstance, onMounted, ref, toRaw, w
 import useForm from '/@/mixins/useForm'
 import hasPermission from '/@/mixins/hasPermission'
 import UTable from '/@/components/u-table/index.jsx'
-import { RuleRequire } from '/@/config/rules.js'
 import Configs from '/@/mixins/configs.js'
+import { RuleRequire } from '/@/config/rules.js'
 export default defineComponent({
 	setup () {
 		const {
@@ -14,35 +14,35 @@ export default defineComponent({
 		const state = reactive({
 			visible: false
 		})
+		const filterForm = reactive({
+			userStatu: null
+		})
 		// 表格
 		const columns = [
 			{
-				title: '权限名称',
-				dataIndex: 'permissionName',
+				title: '用户账号',
+				dataIndex: 'userName',
 				align: 'center'
 			},
 			{
-				title: '权限编号',
-				dataIndex: 'permissionCode',
+				title: '用户密码',
+				dataIndex: 'password',
 				align: 'center'
 			},
 			{
-				title: '权限类型',
-				dataIndex: 'permissionType',
+				title: '用户角色',
+				dataIndex: 'role',
 				align: 'center'
 			},
 			{
-				title: '权限描述',
-				dataIndex: 'permissionDes',
-				align: 'left'
+				title: '用户状态',
+				dataIndex: 'userStatu',
+				align: 'center'
 			}
 		]
-		const filterForm = reactive({
-			permissionType: null
-		})
 		let tableRef = null
 		function getTable (param) {
-			return $api.sys.permission.page(toRaw(param))
+			return $api.sys.user.page(param)
 		}
 		function showEdit (data) {
 			if (data._id) {
@@ -50,10 +50,11 @@ export default defineComponent({
 			} else {
 				form._id && (delete form._id)
 			}
+			getRoleList()
 			state.visible = true
 		}
 		function del (ids) {
-			$api.sys.permission.del({ ids }).then(() => {
+			$api.sys.user.del({ ids }).then(() => {
 				$message.success({ content: '删除成功', key: 'message' })
 				closeModel()
 			})
@@ -62,8 +63,8 @@ export default defineComponent({
 			let slots = {
 				filterForm: () => (
 					<a-form model={filterForm} layout="inline">
-						<a-form-item label="权限类型"  >
-							<a-radio-group vModel={[filterForm.permissionType, 'value']} options={Configs.value.permissionType}>
+						<a-form-item label="用户状态"  >
+							<a-radio-group vModel={[filterForm.userStatu, 'value']} options={Configs.value.userStatu}>
 							</a-radio-group>
 						</a-form-item>
 					</a-form >
@@ -75,7 +76,7 @@ export default defineComponent({
 					onLoad={(ref) => { tableRef = ref }}
 					ref="table"
 					tableConfig={{
-						canEdit: hasPermission('permissionEdit'),
+						canEdit: hasPermission('userEdit'),
 						getTable,
 						columns,
 						filterForm
@@ -86,30 +87,48 @@ export default defineComponent({
 		}
 		// 弹窗
 		const form = reactive({
-			permissionName: '',
-			permissionCode: '',
-			permissionType: '',
-			permissionDes: ''
+			userName: '',
+			password: '',
+			role: '',
+			userStatu: ''
 		})
+		const roleList = reactive({
+			options: [],
+			handleChange: (value) => {
+				// console.log(`selected ${value}`)
+			}
+		})
+		function getRoleList () {
+			if (!roleList.options.length) {
+				$api.sys.role.page({ pageSize: 999 }).then(res => {
+					roleList.options = res.page.map(item => {
+						return {
+							label: item.roleName + ' / ' + item.roleDes,
+							value: item.roleCode
+						}
+					})
+				})
+			}
+		}
 		function getDetail (_id) {
-			$api.sys.permission.detail({ _id }).then(res => {
-				form.permissionName = res.permissionName
-				form.permissionCode = res.permissionCode
-				form.permissionType = res.permissionType
-				form.permissionDes = res.permissionDes
+			$api.sys.user.detail({ _id }).then(res => {
+				form.userName = res.userName
+				form.password = res.password
+				form.role = res.role
+				form.userStatu = res.userStatu
 			})
 		}
 		const rules = reactive({
-			permissionName: [RuleRequire('权限名称')],
-			permissionCode: [RuleRequire('权限编号')],
-			permissionType: [RuleRequire('权限类型')],
-			permissionDes: [RuleRequire('权限描述')],
+			userName: [RuleRequire('用户账号')],
+			password: [RuleRequire('用户密码')],
+			role: [RuleRequire('用户用户')],
+			userStatu: [RuleRequire('用户状态')]
 		})
 		const { onSubmit, validateInfos } = useForm(form, rules, state, getDetail, confirm)
 		function confirm (formData) {
 			if (formData._id) {
 				// 编辑
-				$api.sys.permission.update(formData).then((res) => {
+				$api.sys.user.update(formData).then((res) => {
 					$message.success({ content: '编辑成功', key: 'message' })
 					closeModel()
 				}).catch(err => {
@@ -117,7 +136,7 @@ export default defineComponent({
 				})
 			} else {
 				// 新增
-				$api.sys.permission.create(formData).then((res) => {
+				$api.sys.user.create(formData).then((res) => {
 					$message.success({ content: '新增成功', key: 'message' })
 					closeModel()
 				}).catch(err => {
@@ -143,26 +162,33 @@ export default defineComponent({
 				<a-modal
 					centered
 					vModel={[state.visible, 'visible']}
-					title={'权限' + (form._id ? '编辑' : '新增')}
+					title={'用户' + (form._id ? '编辑' : '新增')}
 					v-slots={slots}>
 					<a-form model={form} label-col={{ span: 6 }} wrapper-col={{ span: 18 }}>
-						<a-form-item label="权限名称" {...validateInfos.permissionName}>
+						<a-form-item label="用户账号" {...validateInfos.userName}>
 							<a-input
-								vModel={[form.permissionName, 'value']}
-								placeholder="请输入权限名称"></a-input>
+								vModel={[form.userName, 'value']}
+								placeholder="请输入用户账号"
+							></a-input>
 						</a-form-item>
-						<a-form-item label="权限编号"  {...validateInfos.permissionCode}>
+						<a-form-item label="用户密码"  {...validateInfos.password}>
 							<a-input
-								vModel={[form.permissionCode, 'value']}
-								disabled={form._id ? true : false}
-								placeholder="请输入权限编号"></a-input>
+								vModel={[form.password, 'value']}
+								placeholder="请输入用户密码"
+							></a-input>
 						</a-form-item>
-						<a-form-item label="权限类型"  {...validateInfos.permissionType} >
-							<a-radio-group vModel={[form.permissionType, 'value']} options={Configs.value.permissionType}>
+						<a-form-item label="用户角色"  {...validateInfos.role} >
+							<a-radio-group vModel={[form.role, 'value']} options={roleList.options}>
+								{/* {
+									roleList.options.map(role => {
+										return <a-radio style={{ display: 'block' }} value={role.value}>{role.label}</a-radio>
+									})
+								} */}
 							</a-radio-group>
 						</a-form-item>
-						<a-form-item label="权限描述" {...validateInfos.permissionDes}>
-							<a-textarea vModel={[form.permissionDes, 'value']} placeholder="请输入权权限描述" rows="3" />
+						<a-form-item label="用户状态"  {...validateInfos.userStatu} >
+							<a-radio-group vModel={[form.userStatu, 'value']} options={Configs.value.userStatu}>
+							</a-radio-group>
 						</a-form-item>
 					</a-form>
 				</a-modal >

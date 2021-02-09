@@ -21,8 +21,8 @@ router.beforeEach(async (to, from, next) => {
 		} else {
 			if (token) {
 				if (JSON.stringify(userInfo) == '{}') {
-					const res = await store.dispatch('user/getUserInfo').then(res => { })
-					asyncRoutes.forEach((item) => {
+					const { menuTreeMap, permission } = await store.dispatch('user/getUserInfo')
+					filterRoutes(asyncRoutes, menuTreeMap, permission).forEach((item) => {
 						router.addRoute(item)
 					})
 					next(to.path)
@@ -36,8 +36,19 @@ router.beforeEach(async (to, from, next) => {
 	}
 })
 
-function filterRoutes (asRoutes, usRoutes) {
+function filterRoutes (asRoutes, menuTreeMap, permission) {
 	//filter your Routes
-	console.log(asRoutes, usRoutes)
-	return asRoutes
+	let addRoutes = asRoutes.filter(asR => {
+		return hasPermission(permission, asR)
+	})
+	addRoutes.forEach(route => {
+		route.meta.title = menuTreeMap[route.name]
+		if (route.children && route.children.length) {
+			route.children = filterRoutes(route.children, menuTreeMap, permission)
+		}
+	})
+	return addRoutes
+}
+function hasPermission (permission, route) {
+	return permission.indexOf(route.name) !== -1 && route.meta.menu
 }
