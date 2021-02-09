@@ -188,7 +188,7 @@ export default defineComponent({
 								disabled={form._id ? true : false}
 								placeholder="请输入菜单编号"></a-input>
 						</a-form-item>
-						<a-form-item label="权限编号">
+						<a-form-item label="权限编号" {...validateInfos.permissionCode}>
 							<a-select
 								vModel={[form.permissionCode, 'value']}
 								show-search
