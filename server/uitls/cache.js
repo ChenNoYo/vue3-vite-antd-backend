@@ -22,7 +22,6 @@ async function resetCache () {
       cache[role.roleCode].menuTreeMap[item.menuCode] = item.menuName
     })
   })
-  console.log('cache', cache)
 }
 function getMenu (data, parentCode) {
   let codes = data.map(item => item.parentCode)

@@ -57,9 +57,7 @@ async function Page (model, query = {}, sort = {}, req, res = null) {
           reject(err)
         } else {
           let response = {
-            page,
-            pageNum,
-            pageSize
+            page
           }
           resolve(response)
         }

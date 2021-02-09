@@ -12,7 +12,7 @@ const {
 } = require('./common');
 
 const ConfigController = {
-  async all(req, res) {
+  async all (req, res) {
     try {
       let response = await getConfigs()
       res.json({

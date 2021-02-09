@@ -11,8 +11,12 @@ const urlencode = require('urlencode')
 const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
-// 权限管理
+// 缓存管理
 require('./uitls/cache')
+if (process.env.NODE_ENV === 'development') {
+    // apidoc接口自动生成
+    require('./uitls/autoApidoc')
+}
 
 // 日志打印
 const logger = require('./uitls/logger').logger
