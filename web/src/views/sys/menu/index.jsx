@@ -1,8 +1,8 @@
 import { defineComponent, reactive, getCurrentInstance, onMounted, ref, toRaw, watch, watchEffect, computed } from 'vue'
+import { RuleRequire } from '/@/config/rules.js'
 import useForm from '/@/mixins/useForm'
 import hasPermission from '/@/mixins/hasPermission'
 import UTable from '/@/components/u-table/index.jsx'
-import { RuleRequire } from '/@/config/rules.js'
 export default defineComponent({
 	setup () {
 		const {

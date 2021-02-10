@@ -39,4 +39,14 @@ router.get('/userInfo', checkUser, userController.userInfo)
  */
 router.post('/logout', checkUser, userController.logout)
 
+/**
+ * @api {post} /user/updatePassword 修改密码
+ * @apiGroup 用户
+ * @apiName 修改密码
+ * 
+ * @apiParam {String} oldP 旧密码
+ * @apiParam {String} newP 新密码
+ */
+router.post('/updatePassword', checkUser, userController.updatePassword)
+
 module.exports = router

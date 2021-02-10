@@ -1,4 +1,4 @@
-function checkUser(req, res, next) {
+function checkUser (req, res, next) {
   if (req.session.user) {
     next()
   } else {

@@ -88,13 +88,14 @@ const SysController = {
     // 获取列表
     async page (req, res) {
       let configMap = await getConfig()
-      const keyWordReg = new RegExp(req.query.keyWord, 'i')
+      const keywordReg = new RegExp(req.query.keyword, 'i')
+      console.log('req.query.keyword: ', req.query.keyword);
       let response = await Page(Permission, {
         // 模糊搜索
         $or: [
-          { permissionName: { $regex: keyWordReg } },
-          { permissionCode: { $regex: keyWordReg } },
-          { permissionDes: { $regex: keyWordReg } }
+          { permissionName: { $regex: keywordReg } },
+          { permissionCode: { $regex: keywordReg } },
+          { permissionDes: { $regex: keywordReg } }
         ]
       }, { permissionType: 1, createTime: 1 }, req)
       response.page.forEach(item => {
@@ -128,11 +129,11 @@ const SysController = {
     // 获取列表
     async page (req, res) {
       let configMap = await getConfig()
-      const keyWordReg = new RegExp(req.query.keyWord, 'i')
+      const keywordReg = new RegExp(req.query.keyword, 'i')
       let response = await Page(User, {
         // 模糊搜索
         $or: [
-          { userName: { $regex: keyWordReg } },
+          { userName: { $regex: keywordReg } },
         ]
       }, { createTime: 1 }, req)
       response.page.forEach(item => {

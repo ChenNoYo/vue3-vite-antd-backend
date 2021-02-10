@@ -46,5 +46,23 @@ module.exports = {
         menuTreeMap: cache[req.session.user.role].menuTreeMap
       }
     })
-  }
+  },
+  // 修改密码
+  async updatePassword (req, res) {
+    const form = req.body
+    let user = await User.findOne({ _id: req.session.user._id, password: form.oldP })
+    if (user) {
+      await User.findOneAndUpdate({
+        _id: req.session.user._id
+      }, { password: form.newP })
+      res.json({
+        status: 200
+      })
+    } else {
+      res.json({
+        status: 400,
+        message: '请输入正确的密码'
+      })
+    }
+  },
 }

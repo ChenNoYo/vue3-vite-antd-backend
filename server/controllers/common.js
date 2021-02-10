@@ -23,14 +23,11 @@ async function getConfig (propCodes) {
     Config.find({
     }).exec((err, doc) => {
       if (doc) {
-        console.log('doc: ', doc);
         let configMap = {}
         doc.forEach(item => {
-          console.log('item.propCode: ', item.propCode);
           !configMap[item.propCode] && (configMap[item.propCode] = {})
           configMap[item.propCode][item.value] = item.label
         })
-        console.log('configMap: ', configMap);
         resolve(configMap)
       } else {
         reject(err)
@@ -43,7 +40,7 @@ async function Page (model, query = {}, sort = {}, req, res = null) {
   let { pageSize, pageNum } = req.query
   req.query.pageSize && delete req.query.pageSize
   req.query.pageNum && delete req.query.pageNum
-  req.query.keyWord && delete req.query.keyWord
+  req.query.keyword && delete req.query.keyword
   query = Object.assign(req.query, query)
   let response = await new Promise((resolve, reject) => {
     pageNum = pageNum ? parseInt(pageNum) : 1

@@ -133,6 +133,8 @@ router.post('/role/del', checkUser, sysController.role.del)
  *
  * @apiParam {String} pageSize 数量
  * @apiParam {String} pageNum 页码
+ * @apiParam {String} permission 权限类型
+ * @apiParam {String} keyword 关键字
  * 
  * @apiSuccess {Array} page 列表数据
  * @apiSuccess {Number} total 数据总量
@@ -184,6 +186,8 @@ router.post('/permission/del', checkUser, sysController.permission.del)
  *
  * @apiParam {String} pageSize 数量
  * @apiParam {String} pageNum 页码
+ * @apiParam {String} userStatu 用户状态
+ * @apiParam {String} keyword 关键字
  * 
  * @apiSuccess {Array} page 列表数据
  * @apiSuccess {Number} total 数据总量

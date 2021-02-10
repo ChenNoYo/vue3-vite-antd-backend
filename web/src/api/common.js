@@ -24,6 +24,10 @@ export default {
 		const url = '/user/logout'
 		return axios.post(url)
 	},
+	updatePassword (data) {
+		const url = '/user/updatePassword'
+		return axios.post(url, data)
+	},
 	getConfigs () {
 		return axios.get(`/common/configs`)
 	},

@@ -1,15 +1,10 @@
 import {
-	onMounted,
-	onUnmounted,
-	reactive,
-	toRefs,
-	watch,
-	watchEffect,
-	computed,
 	getCurrentInstance,
-	defineComponent
+	defineComponent,
+	reactive
 } from 'vue'
-
+import { RuleRequire } from '/@/config/rules.js'
+import useForm from '/@/mixins/useForm'
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
 
 export default defineComponent(() => {
@@ -22,7 +17,6 @@ export default defineComponent(() => {
 		$router
 	} = getCurrentInstance().appContext.config.globalProperties
 	const userInfo = $store.getters['user/userInfo']
-	function handleChange () { }
 	function logout () {
 		$confirm({
 			okText: '确定',
@@ -35,6 +29,57 @@ export default defineComponent(() => {
 			}
 		})
 	}
+	const state = reactive({
+		visible: false
+	})
+	const form = reactive({
+		oldP: '',
+		newP: ''
+	})
+	const rules = reactive({
+		oldP: [RuleRequire('旧密码')],
+		newP: [RuleRequire('新密码')]
+	})
+	const { onSubmit, validateInfos } = useForm(form, rules, state, null, confirm)
+	function confirm (formData) {
+		$api.common.updatePassword(formData).then(res => {
+			$message.success({ content: '修改成功', key: 'message' })
+			state.visible = false
+		})
+	}
+	function renderModol () {
+		const slots = {
+			footer: () => (
+				<div class="model-footer">
+					<a-button onClick={onSubmit} type="primary">
+						提交
+					</a-button>
+				</div>
+			)
+		}
+		return (
+			<a-modal
+				centered
+				vModel={[state.visible, 'visible']}
+				title="修改密码"
+				v-slots={slots}>
+				<a-form model={form} label-col={{ span: 6 }} wrapper-col={{ span: 18 }}>
+					<a-form-item label="旧密码" {...validateInfos.oldP}>
+						<a-input
+							type="password"
+							vModel={[form.oldP, 'value']}
+							placeholder="请输入旧密码"></a-input>
+					</a-form-item>
+					<a-form-item label="新密码"  {...validateInfos.newP}>
+						<a-input
+							type="password"
+							vModel={[form.newP, 'value']}
+							placeholder="请输入新密码"></a-input>
+					</a-form-item>
+				</a-form>
+			</a-modal>
+		)
+	}
 	const slots = {
 		overlay: () => (
 			<a-menu>
@@ -42,7 +87,7 @@ export default defineComponent(() => {
 					<span onClick={logout}>退出账号</span>
 				</a-menu-item>
 				<a-menu-item>
-					<span>修改密码</span>
+					<span onClick={e => { state.visible = true }}>修改密码</span>
 				</a-menu-item>
 			</a-menu>
 		)
@@ -55,6 +100,7 @@ export default defineComponent(() => {
 					<DownOutlined />
 				</a>
 			</a-dropdown>
+			{	renderModol()}
 		</header>
 	)
 })

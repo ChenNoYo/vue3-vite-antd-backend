@@ -35,7 +35,7 @@ export default defineComponent({
 			columns: [],
 			tableList: [],
 			selectedRowKeys: [],
-			keyWord: ''
+			keyword: ''
 		})
 		onMounted(() => {
 			state.columns = []
@@ -59,7 +59,7 @@ export default defineComponent({
 		function getTableList () {
 			state.tableLoading = true
 			// 基本参数
-			let param = { pageSize: state.pageSize, pageNum: state.pageNum, keyWord: state.keyWord }
+			let param = { pageSize: state.pageSize, pageNum: state.pageNum, keyword: state.keyword }
 			// 合并过滤
 			if (props.tableConfig.filterForm) {
 				param = Object.assign(param, props.tableConfig.filterForm)
@@ -118,7 +118,7 @@ export default defineComponent({
 						</a-col>
 						<a-col span="8">
 							<a-input-search
-								vModel={[state.keyWord, 'value']}
+								vModel={[state.keyword, 'value']}
 								placeholder="请输入关键字"
 								size="large"
 								onKeyUp={(e) => { e.keyCode === 13 && getTableList() }}
