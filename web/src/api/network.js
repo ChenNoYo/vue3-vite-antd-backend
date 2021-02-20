@@ -7,7 +7,9 @@
 import { create } from 'axios'
 import qs from 'qs'
 import { message } from 'ant-design-vue';
-import router from "../router/index.js";
+import router from '../router'
+import { removeToken } from '/@/config/auth'
+
 import {
   baseUrl
 } from '../environment/index.js'
@@ -26,10 +28,14 @@ let axiosErrorHandler = (code, msg) => {
   if ((code >= 200 && code < 300) || code === 304) {
     return true
   } else if (code === 401) {
-    message.warn(msg, 1, () => {
-      router.push({ path: '/Login' })
+    removeToken()
+    message.warn({
+      content: msg || '未知错误',
+      key: 'message',
     })
-    return true
+    router.push({ path: '/login' })
+    window.location.reload()
+    return false
   } else if (code === 500) {
     message.error({ content: msg || '未知错误', key: 'message' })
     return false

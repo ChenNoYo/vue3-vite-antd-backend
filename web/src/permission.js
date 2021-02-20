@@ -1,5 +1,5 @@
 import router from './router'
-import { getToken } from '/@/config/auth'
+import { getToken, } from '/@/config/auth'
 import store from './store'
 import asyncRoutes from './router/asyncRoutes'
 
