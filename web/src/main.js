@@ -9,28 +9,42 @@ import App from './App.jsx'
 import router from './router/index.js'
 import store from './store/index.js'
 
+const app = createApp(App)
+
 // 基础样式
 import '/@/assets/css/common.css'
 import '/@/assets/css/theme.less'
 
 // antd 组件库
-import Antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
-
-// 提示配置
-import { message } from 'ant-design-vue';
+// import Antd from 'ant-design-vue'
+// import 'ant-design-vue/dist/antd.css'
+import { Layout, Row, Col, ConfigProvider, Button, Dropdown, Breadcrumb, Menu, Form, Input, Modal, Radio, Switch, Table, Tree, message } from 'ant-design-vue'
 message.config(
 	{
 		top: '150px'
 	}
 )
+app
+	.use(Layout)
+	.use(Row)
+	.use(Col)
+	.use(ConfigProvider)
+	.use(Button)
+	.use(Dropdown)
+	.use(Breadcrumb)
+	.use(Menu)
+	.use(Form)
+	.use(Input)
+	.use(Modal)
+	.use(Radio)
+	.use(Switch)
+	.use(Table)
+	.use(Tree)
+	.use(message)
+
 
 // 全局样式
 import '/@/index.less'
-
-// iconfont
-
-const app = createApp(App)
 
 // 全局混入
 // app.mixin({
@@ -51,7 +65,7 @@ app.config.globalProperties.$utils = utils
 import './permission'
 
 // 功能注册
-app.use(router).use(store).use(Antd)
+app.use(router).use(store)
 
 // 挂载
 router.isReady().then(() => {

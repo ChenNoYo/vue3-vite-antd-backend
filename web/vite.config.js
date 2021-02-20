@@ -14,11 +14,34 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import vitePluginImp from 'vite-plugin-imp'
 const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
 
 export default defineConfig({
 	// 插件
-	plugins: [vue(), vueJsx()],
+	plugins: [
+		vue(),
+		vueJsx(),
+		vitePluginImp({
+			libList: [
+				{
+					libName: 'ant-design-vue',
+					style (name) {
+						// if (/popconfirm/.test(name)) {
+						// 	// support multiple style file path to import
+						// 	return [
+						// 		'ant-design-vue/es/button/style/index.css',
+						// 		'ant-design-vue/es/popover/style/index.css'
+						// 	]
+						// }
+						if (name == 'col' || name == 'row') {
+							return 'ant-design-vue/es/grid/style/index.css'
+						}
+						return `ant-design-vue/es/${name}/style/index.css`
+					}
+				},
+			]
+		})],
 	alias: {
 		// 键必须以斜线开始和结束
 		'/@': path.resolve(__dirname, '.', 'src')
