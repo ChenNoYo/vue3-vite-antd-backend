@@ -40,7 +40,7 @@ export default defineComponent({
 		onMounted(() => {
 			state.columns = []
 			state.columns = props.tableConfig.columns
-			if (!props.tableConfig.noOperation)
+			if (!props.tableConfig.noOperation && (props.tableConfig.canEdit))
 				state.columns.push({
 					title: '操作',
 					key: 'action',
