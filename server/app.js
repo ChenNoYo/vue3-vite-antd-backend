@@ -12,7 +12,8 @@ const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
 // 缓存管理
-require('./uitls/cache')
+const { resetCache } = require('./uitls/cache')
+resetCache()
 if (process.env.NODE_ENV === 'development') {
     // apidoc接口自动生成
     require('./uitls/autoApidoc')

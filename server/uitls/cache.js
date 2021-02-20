@@ -4,23 +4,25 @@ async function resetCache () {
   let roles = await Role.find()
   let menus = await Menu.find({ show: true }, {}, { sort: { ranking: 1 }, lean: true })
   roles.forEach(role => {
+    // 生成角色
+    !cache[role.roleCode] && (cache[role.roleCode] = {})
+    // 角色权限
     let permission = role.permission
-    let menuPass = []
+    cache[role.roleCode].permission = permission
+    let menuPass = new Array(0)
     // 权限过滤菜单
     menus.forEach(item => {
       if (permission.indexOf(item.permissionCode) !== -1) {
         menuPass.push(item)
       }
     })
-    // 生成菜单树
-    let menuTree = getMenu(menuPass, '0')
-    cache[role.roleCode] = {}
-    cache[role.roleCode].permission = permission
-    cache[role.roleCode].menuTree = menuTree
+    // 菜单树对应中文map
     cache[role.roleCode].menuTreeMap = {}
     menuPass.forEach(item => {
       cache[role.roleCode].menuTreeMap[item.menuCode] = item.menuName
     })
+    // 生成菜单树
+    cache[role.roleCode].menuTree = JSON.parse(JSON.stringify(getMenu(menuPass, '0')))
   })
 }
 function getMenu (data, parentCode) {
@@ -39,7 +41,6 @@ function getMenu (data, parentCode) {
   })
   return parent
 }
-resetCache()
 module.exports = {
   cache,
   resetCache

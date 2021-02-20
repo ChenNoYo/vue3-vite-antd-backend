@@ -50,6 +50,11 @@ export default defineComponent({
 				align: 'center'
 			},
 			{
+				title: '是否展示',
+				dataIndex: 'show',
+				align: 'center'
+			},
+			{
 				title: '排序',
 				dataIndex: 'ranking',
 				align: 'center'
@@ -58,7 +63,12 @@ export default defineComponent({
 		let tableRef = null
 		function getTable (param) {
 			param.parentCode = state.parentCode
-			return $api.sys.menu.page(param)
+			return $api.sys.menu.page(param).then(res => {
+				res.page.forEach(item => {
+					item.show = item.show ? '是' : '否'
+				})
+				return Promise.resolve(res)
+			})
 		}
 		function showEdit (data) {
 			if (data._id) {
