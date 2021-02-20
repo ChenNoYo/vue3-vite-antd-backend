@@ -16,14 +16,21 @@ import '/@/assets/css/common.css'
 import '/@/assets/css/theme.less'
 
 // antd 组件库
+// 完整引入
 // import Antd from 'ant-design-vue'
 // import 'ant-design-vue/dist/antd.css'
-import { Layout, Row, Col, ConfigProvider, Button, Dropdown, Breadcrumb, Menu, Form, Input, Modal, Radio, Switch, Table, Tree, message } from 'ant-design-vue'
+// app
+// 	.use(Antd)
+
+// 手动按需引入
+import { Layout, Row, Col, ConfigProvider, Button, Dropdown, Breadcrumb, Menu, Form, Input, Select, Checkbox, Modal, Radio, Switch, Table, Pagination, Tree, message } from 'ant-design-vue'
 message.config(
 	{
 		top: '150px'
 	}
 )
+app.config.globalProperties.$message = message
+app.config.globalProperties.$confirm = Modal.confirm
 app
 	.use(Layout)
 	.use(Row)
@@ -35,13 +42,17 @@ app
 	.use(Menu)
 	.use(Form)
 	.use(Input)
+	.use(Select)
+	.use(Checkbox)
 	.use(Modal)
 	.use(Radio)
 	.use(Switch)
 	.use(Table)
+	.use(Pagination)
 	.use(Tree)
 	.use(message)
-
+// 动态特效 可以不引入 但是视觉效果变差
+import 'ant-design-vue/lib/style/index.css'
 
 // 全局样式
 import '/@/index.less'
