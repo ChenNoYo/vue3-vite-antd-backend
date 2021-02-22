@@ -6,7 +6,33 @@
 	// background: #ddd;
 	-webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
 	display: flex;
-	justify-content: flex-end;
 	// overflow-x: auto;
+	background: #fff;
 	box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
+	.left {
+		flex: 1;
+		display: flex;
+		align-items: center;
+	}
+	.right {
+		flex: 4;
+		display: flex;
+		justify-content: flex-end;
+	}
+	.layout-header-action-item {
+		padding: 0 var(--md);
+		cursor: pointer;
+		background: #fff;
+		display: flex;
+		align-items: center;
+		&:hover {
+			background: #f6f6f6;
+		}
+		.anticon {
+			font-size: 20px;
+		}
+	}
+	.ant-dropdown-trigger {
+		margin-left: var(--md);
+	}
 }

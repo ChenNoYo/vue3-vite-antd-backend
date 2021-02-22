@@ -173,14 +173,16 @@ export default defineComponent({
 				{slots.filterForm && renderFilterForm()}
 				{props.tableConfig.canEdit && renderBtns()}
 				<a-table
-					row-selection={props.tableConfig.canEdit && { selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }}
+					rowSelection={props.tableConfig.canEdit && { selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }}
+					rowClassName={(record, index) => (index % 2 === 1 ? 'table-striped' : null)}
 					bordered
 					loading={state.tableLoading}
 					pagination={false}
 					columns={state.columns}
 					row-key={props.tableConfig.key || '_id'}
 					dataSource={state.tableList}
-					v-slots={tableSlots}></a-table>
+					vSlots={tableSlots}
+				></a-table>
 				<a-pagination
 					onChange={getTableList}
 					onShowSizeChange={getTableList}

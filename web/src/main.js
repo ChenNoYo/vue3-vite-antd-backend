@@ -23,7 +23,7 @@ import '/@/assets/css/theme.less'
 // 	.use(Antd)
 
 // 手动按需引入
-import { Layout, Row, Col, ConfigProvider, Button, Dropdown, Breadcrumb, Menu, Form, Input, Select, Checkbox, Modal, Radio, Switch, Table, Pagination, Tree, message } from 'ant-design-vue'
+import { Layout, Row, Col, ConfigProvider, Button, Dropdown, Breadcrumb, Menu, Form, Input, Select, Checkbox, Modal, Radio, Switch, Table, Pagination, Tree, message, Tooltip } from 'ant-design-vue'
 message.config(
 	{
 		top: '150px'
@@ -51,6 +51,7 @@ app
 	.use(Pagination)
 	.use(Tree)
 	.use(message)
+	.use(Tooltip)
 // 动态特效 可以不引入 但是视觉效果变差
 import 'ant-design-vue/lib/style/index.css'
 

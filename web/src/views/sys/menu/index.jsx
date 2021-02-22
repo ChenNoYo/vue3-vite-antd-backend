@@ -143,6 +143,7 @@ export default defineComponent({
 			permissionCode: [RuleRequire('权限编号')]
 		})
 		const { onSubmit, validateInfos } = useForm(form, rules, state, getDetail, confirm)
+		console.log('validateInfos: ', validateInfos);
 		function confirm (formData) {
 			if (formData._id) {
 				// 编辑

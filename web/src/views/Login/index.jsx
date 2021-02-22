@@ -22,8 +22,8 @@ export default defineComponent({
 			$router
 		} = getCurrentInstance().appContext.config.globalProperties
 		const userRef = reactive({
-			userName: window.localStorage.getItem('userName') || '',
-			password: ''
+			userName: window.localStorage.getItem('userName') || 'admin',
+			password: '123456'
 		})
 		const rulesRef = reactive({
 			userName: [

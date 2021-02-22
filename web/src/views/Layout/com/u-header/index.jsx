@@ -1,11 +1,15 @@
 import {
 	getCurrentInstance,
 	defineComponent,
-	reactive
+	reactive,
+	ref
 } from 'vue'
 import { RuleRequire } from '/@/config/rules.js'
+import { useRoute } from 'vue-router'
 import useForm from '/@/mixins/useForm'
-import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import useFullScreen from '/@/mixins/useFullScreen'
+import { DownOutlined, FullscreenOutlined, FullscreenExitOutlined, RedoOutlined } from '@ant-design/icons-vue'
+import Breadcrumb from '../breadcrumb'
 
 export default defineComponent(() => {
 	const {
@@ -14,8 +18,47 @@ export default defineComponent(() => {
 		$confirm,
 		$destroyAll,
 		$message,
-		$router
+		$router,
+		$route
 	} = getCurrentInstance().appContext.config.globalProperties
+	const route = useRoute()
+	function refreshPage () {
+		$router.replace({ path: `/redirect${route.path}` })
+	}
+	function renderRefresh () {
+		return (
+			<a-tooltip
+				vSlots={{
+					title: () => ('刷新'),
+					default: () => {
+						return (
+							<div class="layout-header-action-item" onClick={refreshPage}>
+								<RedoOutlined />
+							</div>
+						)
+					}
+				}}>
+			</a-tooltip>
+		)
+	}
+	function renderFullScreen () {
+		const { isFullScreen, toggleFullscreen } = useFullScreen()
+		return (
+			<a-tooltip
+				vSlots={{
+					title: () => (isFullScreen ? '退出全屏' : '全屏'),
+					default: () => {
+						const Icon = isFullScreen ? (<FullscreenExitOutlined />) : (< FullscreenOutlined />)
+						return (
+							<div class="layout-header-action-item" onClick={toggleFullscreen}>
+								<Icon />
+							</div>
+						)
+					}
+				}}>
+			</a-tooltip>
+		)
+	}
 	const userInfo = $store.getters['user/userInfo']
 	function logout () {
 		$confirm({
@@ -94,14 +137,21 @@ export default defineComponent(() => {
 	}
 	return () => (
 		<header class="u-header">
-			<a-dropdown v-slots={slots}>
-				<a>
-					{userInfo.userName}
-					<DownOutlined />
-				</a>
-			</a-dropdown>
-			{	renderModol()}
-		</header>
+			<div className="left">
+				<Breadcrumb />
+			</div>
+			<div className="right">
+				{renderRefresh()}
+				{renderFullScreen()}
+				<a-dropdown v-slots={slots}>
+					<a>
+						{userInfo.userName}
+						<DownOutlined />
+					</a>
+				</a-dropdown>
+				{renderModol()}
+			</div>
+		</header >
 	)
 })
 import './style.less'

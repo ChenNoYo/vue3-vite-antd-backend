@@ -50,5 +50,5 @@ function filterRoutes (asRoutes, menuTreeMap, permission) {
 	return addRoutes
 }
 function hasPermission (permission, route) {
-	return permission.indexOf(route.name) !== -1 && route.meta.menu
+	return route.name == '404' || route.name == 'Redirect' || permission.indexOf(route.name) !== -1 && route.meta.menu
 }

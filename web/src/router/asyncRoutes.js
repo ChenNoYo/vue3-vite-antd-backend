@@ -52,15 +52,29 @@ const asyncRoutes = [
 				name: 'config',
 				meta: { menu: true, title: '' },
 				component: () => import('/@/views/sys/config')
-			},
-			{
-				path: '/:pathMatch(.*)*',
-				name: '404',
-				meta: { title: '404' },
-				component: () => import('/@/views/404/')
 			}
 		]
 	}
 ]
+asyncRoutes.forEach(route => {
+	route.children.push(
+		{
+			path: '/:pathMatch(.*)*',
+			name: '404',
+			meta: { title: '404' },
+			component: () => import('/@/views/404/')
+		})
+	route.children.push(
+		{
+			path: '/redirect/:path(.*)*',
+			name: 'Redirect',
+			component: () => import('/@/views/redirect/'),
+			meta: {
+				title: 'Redirect',
+				hideBreadcrumb: true,
+			},
+		}
+	)
+})
 
 export default asyncRoutes
